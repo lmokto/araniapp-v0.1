@@ -16,7 +16,7 @@ FORMATS = [ '%(filename)s', '%(levelname)s', '%(funcName)s', '%(lineno)s', '%(me
 HANDLER =  {   "FileHandler":logging.FileHandler,
                 "StreamHandler":logging.StreamHandler   }
 
-PATHLIB = os.getcwd()+"/lib/log/"
+PATHLIB = ''
 
 class build_logger(object):
     '''
