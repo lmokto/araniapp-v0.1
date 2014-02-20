@@ -14,7 +14,7 @@ from urlparse import urlparse
 import dequeforce2
 import os
 
-PATHLOG = os.getcwd()+"/lib/log/"
+PATHLOG = os.getcwd()+"/araniapp/lib/log/"
 
 log = modlogger.build_logger("extract4", "info", PATHLOG+"/extract4.log")
 log.add_handler("FileHandler", "info")
