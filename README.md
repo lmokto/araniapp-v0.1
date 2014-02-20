@@ -7,4 +7,6 @@ lxml cStringIO gzip zlib, bs4, logging, socket, httplib, urllib, urlparse, os, c
 
 =========
 cd araniapp-v0.1
+
+
 ./bin/araniapp www.somehost.com.ar
