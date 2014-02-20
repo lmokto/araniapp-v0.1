@@ -5,8 +5,8 @@ import sys
 import os
 from lib import *
 
-PATHTMP = os.getcwd()+'/lib/tmp/'
-PATHLOG = os.getcwd()+'/lib/log/'
+PATHTMP = os.getcwd()+'/araniapp/lib/tmp/'
+PATHLOG = os.getcwd()+'/araniapp/lib/log/'
 
 FILEOBJ = ''
 FILEHASH = ''
