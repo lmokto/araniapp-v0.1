@@ -2,24 +2,29 @@
 # -*- coding: utf-8 -*-
 from collections import deque, defaultdict
 
+
 class Queue(deque):
     '''
         documentar codigo
     '''
-    #Lista
+    # Lista
     def __init__(self, iterable=(), maxlen=None):
         deque.__init__(self, iterable, maxlen)
         self.lib = defaultdict(dict)
         self.actlib = 0
+
     def __hash(self, r):
         self.lib[hash(r)] = r
+
     def length(self):
         def comp(x):
             n = 0
             if type(x) != int:
-                n+=1
+                n += 1
             return n
+
         return sum(comp(elem) for elem in deque(self))
+
     def append(self, e):
         if type(e) != int:
             e = e.lower()
@@ -35,6 +40,7 @@ class Queue(deque):
             return deque.append(self, e)
         else:
             pass
+
     def next(self):
         if self.length() != 0:
             popleft = deque.popleft(self)
@@ -43,10 +49,12 @@ class Queue(deque):
                 return popleft
         else:
             return 0
+
     def show(self):
         if self.actlib == 1:
             return dict(self.lib)
         else:
             return None
+
     def extend(self):
         pass

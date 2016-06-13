@@ -3,6 +3,7 @@
 
 import socket
 
+
 def getIP(d):
     """
     This method returns the first IP address string
@@ -15,6 +16,8 @@ def getIP(d):
     except Exception:
         # fail gracefully!
         return False
+
+
 #
 def getIPx(d):
     """
@@ -29,6 +32,8 @@ def getIPx(d):
     except Exception:
         # fail gracefully!
         return False
+
+
 #
 def getHost(ip):
     """
@@ -42,6 +47,8 @@ def getHost(ip):
     except Exception:
         # fail gracefully
         return False
+
+
 #
 def getAlias(d):
     """
@@ -51,11 +58,13 @@ def getAlias(d):
     try:
         data = socket.gethostbyname_ex(d)
         alias = repr(data[1])
-        #print repr(data)
+        # print repr(data)
         return alias
     except Exception:
         # fail gracefully
         return False
+
+
 #
 '''
 # test it

@@ -14,41 +14,43 @@ from urlparse import urlparse
 import dequeforce2
 import os
 
-PATHLOG = os.getcwd()+"/araniapp/lib/log/"
+PATHLOG = os.getcwd() + "/araniapp/lib/log/"
 
-log = modlogger.build_logger("extract4", "info", PATHLOG+"/extract4.log")
+log = modlogger.build_logger("extract4", "info", PATHLOG + "/extract4.log")
 log.add_handler("FileHandler", "info")
 
 methods = ["HEAD", "GET", "PATH", "CONNECT", "DELETE", "PUT", "POST"]
 
 excepts = {
-            'socket.gaierror':'Name or service not known',
-            'CannotSendRequest':'CannotSendRequest()',
-            'socket.timeout':'timed out',
-            'httplib.ResponseNotReady': 'Network is unreachable'
-        }
-        
+    'socket.gaierror': 'Name or service not known',
+    'CannotSendRequest': 'CannotSendRequest()',
+    'socket.timeout': 'timed out',
+    'httplib.ResponseNotReady': 'Network is unreachable'
+}
+
+
 class State(httplib.HTTPConnection):
     '''
         documentar codigo
     '''
     pos = 0
     estados = ["Close", "Listening", "Established"]
-        
+
     def reset(self):
         if self.pos == len(self.estados):
             self.pos = 0
-        
+
+
 class Connection(State):
     '''
         documentar codigo
     '''
-        
+
     sinindex = dequeforce2.Queue()
     notfound = dequeforce2.Queue()
-        
+
     def __init__(self, host, port=80, timeout=300):
-        
+
         if host != 'localhost':
             self.host = host
             try:
@@ -61,37 +63,37 @@ class Connection(State):
                 self.headers = {'status': 401}
             self.timeout = timeout
             self.port = port
-        
+
         socket.setdefaulttimeout(timeout)
         httplib.HTTPConnection.__init__(self, self.host, port=self.port, source_address=None)
         httplib.HTTPConnection.debuglevel = 0
-            
+
         self.source = ''
         self.pos = 1
-         
+
     def add_headers(self, addhead={}):
         self.pos = 2
         listhead = {
-                        'accept-charset': 'utf-8,*',
-                        'cache-control': 'no-cache',
-                        'accept-encoding': 'gzip,deflate,sdch',
-                        'accept': 'text/html',
-                        #'cookie': ''
-                        'accept-language': 'es,en-US;q=0.8,en;q=0.6',
-                        'user-agent': "Mozilla/5.0 (X11; Linux x86_64)",
-                        'connection': 'keep-alive',
-                        'DNT': 1 # DO NOT TRACK  : 1 (Do Not Track Enabled) or 0 (Do Not Track Disabled)
-                    } 
+            'accept-charset': 'utf-8,*',
+            'cache-control': 'no-cache',
+            'accept-encoding': 'gzip,deflate,sdch',
+            'accept': 'text/html',
+            # 'cookie': ''
+            'accept-language': 'es,en-US;q=0.8,en;q=0.6',
+            'user-agent': "Mozilla/5.0 (X11; Linux x86_64)",
+            'connection': 'keep-alive',
+            'DNT': 1  # DO NOT TRACK  : 1 (Do Not Track Enabled) or 0 (Do Not Track Disabled)
+        }
         if len(addhead) != 0:
             listhead.update(addhead)
         for head, value in listhead.iteritems():
             self.putheader(head, value)
         self.endheaders()
-        
+
     def callreq(self):
         try:
             self.putrequest(self.method, self.path,
-                                    skip_accept_encoding=self.encoding)
+                            skip_accept_encoding=self.encoding)
             self.add_headers()
             if self.getresponse:
                 self.res = self.getresponse()
@@ -100,14 +102,14 @@ class Connection(State):
                 self.headers = {'status': 504}
         except Exception as err:
             self.pos = 0
-        
+
     def req(self, path='/', method="HEAD", encoding=1, skip_host=0):
-            
+
         self.encoding = encoding
         self.skip_host = skip_host
         self.method = method
         self.path = path
-            
+
         if self.method == "HEAD":
             self.callreq()
             if self.headers['status'] in (200, 201, 203):
@@ -124,7 +126,7 @@ class Connection(State):
                 self.source = ''
                 self.close()
             else:
-                log.info({"url": self.host+self.path, "headers": self.headers})
+                log.info({"url": self.host + self.path, "headers": self.headers})
         elif self.method == "GET":
             self.close()
             self.callreq()
@@ -132,17 +134,17 @@ class Connection(State):
             self.getcontent = self.headers.get('content-type')
             if re.search('text/html', self.getcontent):
                 try:
-                        stream = StringIO(self.res.read())
-                        if self.getencoding in ('gzip', 'x-zip'):
-                            with gzip.GzipFile(mode="rb", fileobj=stream) as f:
-                                self.source = f.read()
-                        elif self.getencoding == "deflate":
-                            self.source = gzip.GzipFile('', 'rb', 9, stream)
-                        else:
-                            self.source = stream.read()
+                    stream = StringIO(self.res.read())
+                    if self.getencoding in ('gzip', 'x-zip'):
+                        with gzip.GzipFile(mode="rb", fileobj=stream) as f:
+                            self.source = f.read()
+                    elif self.getencoding == "deflate":
+                        self.source = gzip.GzipFile('', 'rb', 9, stream)
+                    else:
+                        self.source = stream.read()
                 except Exception as err:
                     self.pos = 0
-            elif self.getcontent == '':#contenido ? imagenes? pdfs? swf?, etc
+            elif self.getcontent == '':  # contenido ? imagenes? pdfs? swf?, etc
                 pass
             else:
                 self.source = ''

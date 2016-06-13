@@ -7,19 +7,19 @@ from io import open
 import os
 import time
 
-class md5sum(object):
 
+class md5sum(object):
     t = time.localtime()
-    __rg = '-d{0}{1}{2}'.format(t.tm_hour,t.tm_min,t.tm_yday)
+    __rg = '-d{0}{1}{2}'.format(t.tm_hour, t.tm_min, t.tm_yday)
     chksum = ''
     chknew = ''
-    path = os.getcwd()+'/lib/tmp/'
-    
+    path = os.getcwd() + '/lib/tmp/'
+
     def md5_save(self, md5):
         hashsave = md5
         path = os.path.dirname(self.filename)
-        name = self.filename.replace(path+"/", '').split('.')[0]
-        self.savehash = self.path+"/"+name+'.md5'
+        name = self.filename.replace(path + "/", '').split('.')[0]
+        self.savehash = self.path + "/" + name + '.md5'
         with open(self.savehash, mode='wb') as f:
             f.write(hashsave)
 
