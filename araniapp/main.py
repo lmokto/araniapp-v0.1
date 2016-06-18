@@ -8,13 +8,9 @@ import redis
 
 redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-PATHTMP = os.getcwd() + '/araniapp/lib/tmp/'
 PATHLOG = os.getcwd() + '/araniapp/lib/log/'
-
-FILEOBJ = ''
-FILEHASH = ''
-
 LOG = build_logger("main", "info", PATHLOG + "main.log")
+LOG.add_handler("StreamHandler", "debug")
 LOG.add_handler("FileHandler", "info")
 
 externos = set([])
@@ -23,29 +19,26 @@ subdominios = set([])
 
 def main(semilla):
 
-    NAME = semilla.rsplit('.')[1]
-    BACKUP = PersistenceObject(NAME, PATHTMP, 'r', '.pik')
-
     conn = Connection(semilla)
-    conn.debuglevel = 1
+    conn.debuglevel = 0
     conn.req()
     extract(conn.source, semilla)
 
     while True:
+
         if redis.scard(semilla) != 0:
             
             time.sleep(1)
-            print conn.estados[conn.pos]
+            LOG.info(conn.estados[conn.pos])
 
             if conn.pos == 0:
-                BACKUP.flag = 'w'
-                BACKUP.dump(list(redis.smembers(semilla)))
-                break
+                time.sleep(120)
+                continue
 
             path = redis.srandmember(semilla)
             redis.smove(semilla, 'indexados::{0}'.format(semilla), path)
 
-            print path
+            LOG.info(path)
             conn.req(path)
 
             if conn.source > 0:
@@ -76,6 +69,6 @@ if __name__ == '__main__':
 
     semilla = sys.argv[1]
     norm = norm(semilla)
-    print 40 * "="
-    print "SCANING ", semilla
+    LOG.info(40 * "=")
+    LOG.info("SCANING {0}".format(semilla))
     main(semilla)

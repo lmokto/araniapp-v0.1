@@ -15,9 +15,8 @@ import dequeforce2
 import os
 
 PATHLOG = os.getcwd() + "/araniapp/lib/log/"
-
-log = modlogger.build_logger("extract4", "info", PATHLOG + "/extract4.log")
-log.add_handler("FileHandler", "info")
+LOG = modlogger.build_logger("extract4", "info", PATHLOG + "extract4.log")
+LOG.add_handler("FileHandler", "info")
 
 methods = ["HEAD", "GET", "PATH", "CONNECT", "DELETE", "PUT", "POST"]
 
@@ -132,6 +131,7 @@ class Connection(State):
             self.callreq()
             self.getencoding = self.headers.get('content-encoding')
             self.getcontent = self.headers.get('content-type')
+            LOG.info('content-type {0} -- path {1}'.format(self.headers, self.path))
             if re.search('text/html', self.getcontent):
                 try:
                     stream = StringIO(self.res.read())
