@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from dequeforce2 import Queue
 from extract4 import Connection
-from lis import li
 from marshalling import PersistenceObject, PersistenceDeque
 from md5sum import md5sum
 from modlogger import build_logger

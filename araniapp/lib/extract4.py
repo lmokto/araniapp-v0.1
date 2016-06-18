@@ -46,8 +46,8 @@ class Connection(State):
         documentar codigo
     '''
 
-    sinindex = dequeforce2.Queue()
-    notfound = dequeforce2.Queue()
+    sinindex = set([])
+    notfound = set([])
 
     def __init__(self, host, port=80, timeout=300):
 
@@ -58,7 +58,7 @@ class Connection(State):
                 for ip in range(len(self.address)):
                     self.address[ip] = tuple(int(v) for v in address.split('.'))
                 self.address = tuple(self.address)
-            except Exception as err:
+            except Exception:
                 self.address = [None, '']
                 self.headers = {'status': 401}
             self.timeout = timeout
@@ -80,7 +80,7 @@ class Connection(State):
             'accept': 'text/html',
             # 'cookie': ''
             'accept-language': 'es,en-US;q=0.8,en;q=0.6',
-            'user-agent': "Mozilla/5.0 (X11; Linux x86_64)",
+            'user-agent': '[Mozilla/5.0 (X11; Linux x86_64)',
             'connection': 'keep-alive',
             'DNT': 1  # DO NOT TRACK  : 1 (Do Not Track Enabled) or 0 (Do Not Track Disabled)
         }
@@ -100,7 +100,7 @@ class Connection(State):
                 self.headers = dict(self.res.getheaders() + [("status", self.res.status)])
             else:
                 self.headers = {'status': 504}
-        except Exception as err:
+        except Exception:
             self.pos = 0
 
     def req(self, path='/', method="HEAD", encoding=1, skip_host=0):
@@ -118,11 +118,11 @@ class Connection(State):
                 self.path = urlparse(self.headers['location']).path
                 self.req(self.path, "GET")
             elif self.headers['status'] in (400, 401, 403, 404):
-                self.notfound.append(self.path)
+                self.notfound.add(self.path)
                 self.source = ''
                 self.close()
             elif self.headers['status'] in (502, 503, 504):
-                self.sinindex.append(self.path)
+                self.sinindex.add(self.path)
                 self.source = ''
                 self.close()
             else:

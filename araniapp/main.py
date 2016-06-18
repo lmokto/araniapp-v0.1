@@ -4,6 +4,10 @@ import sys
 import os
 from lib import *
 
+import redis
+
+redis = redis.StrictRedis(host='localhost', port=6379, db=0)
+
 PATHTMP = os.getcwd() + '/araniapp/lib/tmp/'
 PATHLOG = os.getcwd() + '/araniapp/lib/log/'
 
@@ -14,8 +18,8 @@ LOG = build_logger("main", "info", PATHLOG + "main.log")
 LOG.add_handler("FileHandler", "info")
 
 internos = li()
-externos = Queue()
-subdominios = Queue()
+externos = set([])
+subdominios = set([])
 
 
 def main(semilla):
@@ -25,17 +29,17 @@ def main(semilla):
     conn = Connection(semilla)
     conn.debuglevel = 1
     conn.req()
-    extract(conn.source)
+    extract(conn.source, semilla)
 
     while True:
-        if len(internos) != 0:
+        if redis.scard(semilla) != 0:
             time.sleep(1)
             print conn.estados[conn.pos]
             if conn.pos == 0:
                 BACKUP.flag = 'w'
-                BACKUP.dump(internos)
+                BACKUP.dump(list(redis.smembers(semilla)))
                 break
-            path = internos.pop()
+            path = redis.spop(semilla)
             print path
             conn.req(path)
             if conn.source > 0:
@@ -49,7 +53,7 @@ def main(semilla):
 
 if __name__ == '__main__':
 
-    def extract(source):
+    def extract(source, semilla):
         code = bs4.BeautifulSoup(source)
         for i in code.find_all('a', href=True):
             url = i['href']
@@ -59,7 +63,7 @@ if __name__ == '__main__':
                 if search("^/", parsed.path):
                     url = norm.replace(parsed.path + parsed.params)
                     p = urlparse(url)
-                    internos.append(p.path + p.params)
+                    redis.sadd(semilla, p.path + p.params)
 
 
     semilla = sys.argv[1]
