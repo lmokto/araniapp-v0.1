@@ -30,9 +30,7 @@ excepts = {
 
 
 class State(httplib.HTTPConnection):
-    '''
-        documentar codigo
-    '''
+    ''''''
     pos = 0
     estados = ["Close", "Listening", "Established"]
 
@@ -42,8 +40,10 @@ class State(httplib.HTTPConnection):
 
 
 class Connection(State):
-    '''
-        documentar codigo
+    ''' 
+        conn = Connection(semilla)
+        conn.debuglevel = 1
+        conn.req()
     '''
 
     sinindex = set([])

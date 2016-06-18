@@ -25,6 +25,25 @@ package_data = {
 }
 
 requires = [
+    'appnope==0.1.0',
+    'backports.shutil-get-terminal-size==1.0.0',
+    'beautifulsoup4==4.4.1',
+    'cssselect==0.9.1',
+    'decorator==4.0.10',
+    'hiredis==0.2.0',
+    'ipython==4.2.0',
+    'ipython-genutils==0.1.0',
+    'lxml==3.6.0',
+    'path.py==0.0.0',
+    'pathlib2==2.1.0',
+    'pexpect==4.0.1',
+    'pickleshare==0.7.2',
+    'ptyprocess==0.5.1',
+    'redis==2.10.5',
+    'simplegeneric==0.8.1',
+    'six==1.10.0',
+    'traitlets==4.2.1',
+    'urlnorm==1.1.3'
 ]
 
 classifiers = [

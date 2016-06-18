@@ -17,12 +17,12 @@ FILEHASH = ''
 LOG = build_logger("main", "info", PATHLOG + "main.log")
 LOG.add_handler("FileHandler", "info")
 
-internos = li()
 externos = set([])
 subdominios = set([])
 
 
 def main(semilla):
+
     NAME = semilla.rsplit('.')[1]
     BACKUP = PersistenceObject(NAME, PATHTMP, 'r', '.pik')
 
@@ -33,18 +33,24 @@ def main(semilla):
 
     while True:
         if redis.scard(semilla) != 0:
+            
             time.sleep(1)
             print conn.estados[conn.pos]
+
             if conn.pos == 0:
                 BACKUP.flag = 'w'
                 BACKUP.dump(list(redis.smembers(semilla)))
                 break
-            path = redis.spop(semilla)
+
+            path = redis.srandmember(semilla)
+            redis.smove(semilla, 'indexados::{0}'.format(semilla), path)
+
             print path
             conn.req(path)
+
             if conn.source > 0:
                 code = conn.source
-                extract(code)
+                extract(code, semilla)
             else:
                 continue
         else:
@@ -53,7 +59,7 @@ def main(semilla):
 
 if __name__ == '__main__':
 
-    def extract(source, semilla):
+    def extract(source, semilla=''):
         code = bs4.BeautifulSoup(source)
         for i in code.find_all('a', href=True):
             url = i['href']
@@ -63,7 +69,9 @@ if __name__ == '__main__':
                 if search("^/", parsed.path):
                     url = norm.replace(parsed.path + parsed.params)
                     p = urlparse(url)
-                    redis.sadd(semilla, p.path + p.params)
+                    path = p.path + p.params
+                    if not redis.sismember('indexados::{0}'.format(semilla), path):
+                        redis.sadd(semilla, path)
 
 
     semilla = sys.argv[1]
