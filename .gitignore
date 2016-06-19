@@ -4,3 +4,5 @@ include/*
 lib/*
 *.pyc
 araniapp/lib/log/*.log
+araniapp/lib/log/main.log
+araniapp/lib/log/extract4.log

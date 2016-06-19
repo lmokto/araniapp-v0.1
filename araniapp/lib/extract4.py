@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import gzip
@@ -17,6 +16,7 @@ import os
 PATHLOG = os.getcwd() + "/araniapp/lib/log/"
 LOG = modlogger.build_logger("extract4", "info", PATHLOG + "extract4.log")
 LOG.add_handler("FileHandler", "info")
+LOG.add_handler('StreamHandler', 'debug')
 
 methods = ["HEAD", "GET", "PATH", "CONNECT", "DELETE", "PUT", "POST"]
 
@@ -104,6 +104,8 @@ class Connection(State):
 
     def req(self, path='/', method="HEAD", encoding=1, skip_host=0):
 
+        # import ipdb; ipdb.set_trace()
+
         self.encoding = encoding
         self.skip_host = skip_host
         self.method = method
@@ -144,8 +146,18 @@ class Connection(State):
                         self.source = stream.read()
                 except Exception as err:
                     self.pos = 0
-            elif self.getcontent == '':  # contenido ? imagenes? pdfs? swf?, etc
-                pass
+            elif re.search('multipart/form-data', self.getcontent):  # contenido ? imagenes? pdfs? swf?, etc
+                LOG.info(self.path)
+            elif re.search('application/x-www-form-urlencoded', self.getcontent):
+                LOG.info(self.path)
+            elif re.search('application/json', self.getcontent):
+                LOG.info(self.path)
+            elif re.search('image/jpg', self.getcontent):
+                LOG.info(self.path)
+            elif re.search('image/svg', self.getcontent):
+                LOG.info(self.path)
+            elif re.search('image/svg+xml', self.getcontent):
+                LOG.info(self.path)
             else:
                 self.source = ''
                 self.close()

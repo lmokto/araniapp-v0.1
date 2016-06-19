@@ -1,0 +1,23 @@
+{
+    "redis":{
+        "host": "localhost",
+        "user": "",
+        "port": 6379,
+        "passwd": "",
+        "db": 0
+    },
+    "mongodb":{
+        "host": "",
+        "user": "",
+        "port": 27017,
+        "passwd": "",
+        "db": "" 
+    },
+    "log":{
+        "path":"localhost",
+        "user":"root",
+        "passwd":"my secret password",
+        "db": "write-math"
+    },
+    "debug" : false
+}
