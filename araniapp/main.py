@@ -5,13 +5,12 @@ import os
 from lib import *
 import redis
 import json
+from configobj import ConfigObj
 
-
-with open(os.path.dirname(__file__) + '/config.json') as json_data_file:
-    config = json.load(json_data_file)
-    redis_cfg = config['redis']
-    extract_cfg = config['extract']
-    loggger_cfg = config['logger']
+config = ConfigObj(os.path.dirname(__file__) + '/config.cfg')
+redis_cfg = config['redis']
+extract_cfg = config['extract']
+loggger_cfg = config['logger']
 
 redis = redis.StrictRedis(host=redis_cfg['host'], port=redis_cfg[
                           'port'], db=redis_cfg['db'])

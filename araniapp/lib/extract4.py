@@ -59,8 +59,8 @@ class Connection(State):
 
         self.hiredis = redis
         self.config = config
-        self.find_types = self.config['contents_types']['enabled']
-        self.contents_types = self.config['contents_types']['types']
+        self.find_types = self.config['enabled']
+        self.contents_types = self.config['contents_types']
 
         if host != 'localhost':
             self.host = host
@@ -140,7 +140,7 @@ class Connection(State):
     def req(self, path='/', method="HEAD", encoding=1, skip_host=0):
 
         #import ipdb
-        #ipdb.set_trace()
+        # ipdb.set_trace()
 
         self.encoding = encoding
         self.skip_host = skip_host
