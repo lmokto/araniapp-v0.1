@@ -13,11 +13,32 @@
         "passwd": "",
         "db": "" 
     },
-    "log":{
-        "path":"localhost",
-        "user":"root",
-        "passwd":"my secret password",
-        "db": "write-math"
+    "logger":{
+        "pathfolder": "",
+        "info": false,
+        "debug": false,
+        "StreamHandler": false,
+        "FileHandler": false
     },
-    "debug" : false
+    "extract" : {
+        "debuglevel" : false,
+        "contents_types": {
+            "enabled": false,
+            "types": [
+                "multipart/form-data",
+                "image/jpg",
+                "image/png",
+                "image/svg+xml",
+                "application/x-www-form-urlencoded",
+                "application/json",
+                "application/pdf",
+                "application/vnd.ms-excel",
+                "application/zip",
+                "application/postscript",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/msword",
+                "application/vnd.ms-excel"
+            ]
+        }
+    }
 }

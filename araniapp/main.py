@@ -10,6 +10,8 @@ import json
 with open(os.path.dirname(__file__) + '/config.json') as json_data_file:
     config = json.load(json_data_file)
     redis_cfg = config['redis']
+    extract_cfg = config['extract']
+    loggger_cfg = config['logger']
 
 redis = redis.StrictRedis(host=redis_cfg['host'], port=redis_cfg[
                           'port'], db=redis_cfg['db'])
@@ -28,22 +30,27 @@ def extract(source, semilla=''):
     # import ipdb; ipdb.set_trace()
 
     code = bs4.BeautifulSoup(source)
+
     for i in code.find_all('a', href=True):
+
         url = i['href']
         parsed = urlparse(url)
         netloc = parsed.netloc.replace('www.', '')
+
         if netloc == semilla.replace('www.', '') or netloc == '' and search('^/', parsed.path):
             url = norm.replace(parsed.path + parsed.params)
             p = urlparse(url)
             path = p.path + p.params
             if not redis.sismember('indexados::{0}'.format(semilla), path):
                 redis.sadd(semilla, path)
+        else:
+            redis.sadd('externos{0}::'.format(semilla), url)
 
 
 def main(semilla):
 
-    conn = Connection(semilla)
-    conn.debuglevel = 0
+    conn = Connection(semilla, redis, config=extract_cfg)
+    conn.debuglevel = 1
     conn.req()
     extract(conn.source, semilla)
 
