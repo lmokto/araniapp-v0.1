@@ -64,6 +64,29 @@ def getAlias(d):
         return False
 
 
+
+['https://twitter.com/#!/TelpinCorreo',
+ 'https://ap.telpin.com.ar/',
+ 'http://www.pinamarturismo.com.ar/',
+ 'http://telpineduca.telpin.com.ar/Proyectos/index.htm',
+ '#',
+ 'http://www.telpinteve.com.ar',
+ 'http://www.usaeltelefono.com.ar/',
+ 'http://ovt.telpin.com.ar/',
+ 'http://eltiempo.telpin.com.ar/',
+ 'http://www.slidedeck.com',
+ 'http://www.telpinteve.com.ar/',
+ 'http://usaeltelefono.telpin.com.ar/',
+ 'http://webmail.telpin.com.ar/',
+ 'http://www.facebook.com/profile.php?id=100003304675342',
+ 'https://servicios1.afip.gov.ar/clavefiscal/qr/response.aspx?qr=IbecsVVr-r4e3APTEZvizA,,',
+ 'http://www.youtube.com/user/TelpinVideos',
+ 'http://telpineduca.telpin.com.ar/EGRESADOS/index.htm',
+ 'http://ovt.telpin.com.ar/guia/guia.asp',
+ 'http://telpineduca.telpin.com.ar/LP/Susini/index.htm',
+ 'http://www.adobe.com/go/getflashplayer',
+ 'http://ovt.telpin.com.ar/gestionar.asp']
+ 
 #
 '''
 # test it

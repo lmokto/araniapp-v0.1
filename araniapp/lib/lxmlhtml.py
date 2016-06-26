@@ -11,6 +11,13 @@ from bs4 import BeautifulSoup
 from urlparse import urlsplit
 
 
+
+def content_href(dochtml):
+    html_proc = BeautifulSoup(dochtml, 'html.parser')
+    if re.search('url', html_proc.find('meta').get('content')):
+        return html_proc.find('meta').get('content')
+
+
 def form_action(dochtml):
     html_proc = BeautifulSoup(dochtml, 'html.parser')
     return html_proc.find('form').get('action')

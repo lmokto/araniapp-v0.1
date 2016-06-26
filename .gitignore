@@ -4,4 +4,4 @@ include/*
 lib/*
 *.pyc
 *.log
-config.cfg
+araniapp/config.cfg

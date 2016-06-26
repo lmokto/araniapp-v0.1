@@ -24,7 +24,7 @@ __DEFAUT__ = {
     'accept': 'text/html',
     #'cookie': '',
     'accept-language': 'es,en-US;q=0.8,en;q=0.6',
-    'user-agent': '[Mozilla/5.0 (X11; Linux x86_64)',
+    'user-agent': __USERAGENTS__['Chrome'],
     'connection': 'keep-alive',
     'DNT': 1
 }

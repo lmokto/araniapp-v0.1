@@ -10,12 +10,13 @@ import re
 import os
 import time
 import redis
+import urllib
 
 import modlogger
 from urlparse import urlparse
 
 from status_codes import (
-    __SUCCESS__, __INFO__, __REDIRECTION__, __CLIENT_ERROR__, __SERVER_ERROR__
+    STATUS_SUCCESS, STATUS_INFO, STATUS_REDIRECTION, STATUS_CLIENT_ERROR, STATUS_SERVER_ERROR
 )
 from headers import __DEFAUT__
 
@@ -38,11 +39,11 @@ class State(httplib.HTTPConnection):
         'httplib.ResponseNotReady': 'Network is unreachable'
     }
 
-    SUCCESS = __SUCCESS__
-    INFO = __INFO__
-    REDIRECTION = __REDIRECTION__
-    CLIENT_ERROR = __CLIENT_ERROR__
-    SERVER_ERROR = __SERVER_ERROR__
+    SUCCESS = STATUS_SUCCESS
+    INFO = STATUS_INFO
+    REDIRECTION = STATUS_REDIRECTION
+    CLIENT_ERROR = STATUS_CLIENT_ERROR
+    SERVER_ERROR = STATUS_SERVER_ERROR
 
     def reset(self):
         if self.pos == len(self.estados):
@@ -60,6 +61,7 @@ class Connection(State):
 
         self.hiredis = redis
         self.config = config
+        self.retry = 0
         self.find_types = self.config['enabled']
         self.contents_types = self.config['contents_types']
 
@@ -91,9 +93,9 @@ class Connection(State):
     def __sadd(self, key, member=[], code=False, mimetype=False):
         _key = '{0}::{1}'.format(key, self.host)
         if code:
-            self.hiredis.sadd('{0}::codes'.format(self.host), key)
+            self.hiredis.sadd('codes::{0}'.format(self.host), key)
         elif mimetype:
-            self.hiredis.sadd('{0}::mimetype'.format(self.host), key)
+            self.hiredis.sadd('mimestypes::{0}'.format(self.host), key)
         self.hiredis.sadd(_key, member)
 
     def add_headers(self, addhead={}):
@@ -126,7 +128,7 @@ class Connection(State):
         else:
             self.__sadd(content_type, path)
 
-    def req(self, path='/', method="HEAD", encoding=1, skip_host=0):
+    def req(self, path='/', method="HEAD", encoding=1, skip_host=0, retry=0):
 
         #import ipdb
         # ipdb.set_trace()
@@ -139,23 +141,23 @@ class Connection(State):
         if self.method == "HEAD":
             self.callreq()
             status = self.headers['status']
-            if status in self.INFO.keys():
+            if status in self.INFO:
                 self.__sadd(status, self.path, code=True)
-            elif status in self.SUCCESS.keys():
+            elif status in self.SUCCESS:
                 content_type = self.headers.get('content-type')
                 self.__sadd(status, self.path, code=True)
                 self.__sadd(content_type, self.path, mimetype=True)
                 self.set_content_type(content_type, self.path)
                 self.req(self.path, "GET")
-            elif status in self.REDIRECTION.keys():
+            elif status in self.REDIRECTION:
                 self.__sadd(status, self.path, code=True)
                 self.path = urlparse(self.headers['location']).path
                 self.req(self.path, "GET")
-            elif status in self.CLIENT_ERROR.keys():
+            elif status in self.CLIENT_ERROR:
                 self.__sadd(status, self.path, code=True)
                 self.source = ''
                 self.close()
-            elif status in self.SERVER_ERROR.keys():
+            elif status in self.SERVER_ERROR:
                 self.__sadd(status, self.path, code=True)
                 self.source = ''
                 self.close()
@@ -170,7 +172,7 @@ class Connection(State):
             self.getcontent = self.headers.get('content-type')
             LOG.info(
                 'content-type {0} -- path {1}'.format(self.headers, self.path))
-            if re.search('text/html', self.getcontent):
+            if re.search('text/html', self.getcontent or ''):
                 try:
                     stream = StringIO(self.res.read())
                     if self.getencoding in ('gzip', 'x-zip'):

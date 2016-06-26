@@ -5,7 +5,9 @@ import os
 from lib import *
 import redis
 import json
+import re
 from configobj import ConfigObj
+from lib.utils import gethref, getDomain, getSubdomain
 
 __DIRNAME__ = os.path.dirname(__file__)
 
@@ -26,22 +28,41 @@ def extract(source, semilla=''):
 
     # import ipdb; ipdb.set_trace()
 
-    code = bs4.BeautifulSoup(source)
+    code = bs4.BeautifulSoup(source, 'lxml')
+    list_urls = code.find_all('a', href=True)
+    semilla = semilla.replace('www.', '')
 
-    for i in code.find_all('a', href=True):
 
-        url = i['href']
+    if not list_urls:
+        content_href = code.find('meta').get(
+            'content') if code.find('meta') else ''
+        if re.search('url', content_href):
+            list_urls.append(content_href.split('url=')[1])
+
+    for href in iter(list_urls):
+
+        url = gethref(href)
         parsed = urlparse(url)
         netloc = parsed.netloc.replace('www.', '')
 
-        if netloc == semilla.replace('www.', '') or netloc == '' and search('^/', parsed.path):
-            url = norm.replace(parsed.path + parsed.params)
-            p = urlparse(url)
-            path = p.path + p.params
-            if not redis.sismember('indexados::{0}'.format(semilla), path):
-                redis.sadd(semilla, path)
+        if netloc == semilla or netloc == '':
+
+            if search('^/', parsed.path):
+            
+                url = norm.replace(parsed.path + parsed.params)
+                p = urlparse(url)
+                path = p.path + p.params
+
+                if not redis.sismember('indexados::www.{0}'.format(semilla), path):
+                    redis.sadd('www.{0}'.format(semilla), path)
+            
+            else:
+                redis.sadd('pathdefect::www.{0}'.format(semilla), url)
+
+        elif getDomain(url) == semilla:
+            redis.sadd('internos::www.{0}'.format(semilla), url)
         else:
-            redis.sadd('externos{0}::'.format(semilla), url)
+            redis.sadd('externos::www.{0}'.format(semilla), url)
 
 
 def main(semilla):
