@@ -13,7 +13,8 @@ LEVEL = {"notset": logging.NOTSET,
          "error": logging.ERROR,
          "critical": logging.CRITICAL}
 
-FORMATS = ['%(filename)s', '%(levelname)s', '%(funcName)s', '%(lineno)s', '%(message)s']
+FORMATS = ['%(filename)s', '%(levelname)s',
+           '%(funcName)s', '%(lineno)s', '%(message)s']
 HANDLER = {"FileHandler": logging.FileHandler,
            "StreamHandler": logging.StreamHandler}
 
@@ -26,9 +27,9 @@ class build_logger(object):
     '''
 
     def __init__(self, name, lvl, savefile=None):
-        
+
         self.savefile = savefile
-        
+
         try:
             file_handle = os.open(self.savefile, FLAGS)
         except OSError as e:

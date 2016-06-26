@@ -12,13 +12,6 @@ port=27017
 passwd=None
 db=None
 
-[logger]
-path='/araniapp/lib/log/'
-info=False
-debug=False
-StreamHandler=False
-FileHandler=False
-
 [logger_extract]
 class=FileHandler
 level=INFO
@@ -32,7 +25,6 @@ level=INFO
 formatter=defaultFormatter
 filemode=w
 args=('/var/log/myapp.log',)
-
 
 [extract]
 debuglevel=False

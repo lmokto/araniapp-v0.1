@@ -7,14 +7,12 @@ import redis
 import json
 from configobj import ConfigObj
 
-#import ipdb; ipdb.set_trace()
-
 __DIRNAME__ = os.path.dirname(__file__)
 
 config = ConfigObj(__DIRNAME__ + '/config.cfg')
 redis_cfg = config['redis']
 extract_cfg = config['extract']
-loggger_cfg = config['logger_main']
+#loggger_cfg = config['logger_main']
 
 redis = redis.StrictRedis(host=redis_cfg['host'], port=redis_cfg[
                           'port'], db=redis_cfg['db'])

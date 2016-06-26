@@ -19,7 +19,7 @@ from status_codes import (
 )
 from headers import __DEFAUT__
 
-__DIRNAME__ = os.path.dirname(__file__)
+__DIRNAME__ = os.path.dirname(os.getcwd())
 LOG = modlogger.build_logger("extract4", "info", __DIRNAME__ + "/extract4.log")
 LOG.add_handler("FileHandler", "info")
 LOG.add_handler('StreamHandler', 'debug')
