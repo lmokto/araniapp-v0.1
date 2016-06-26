@@ -13,13 +13,14 @@ import redis
 
 import modlogger
 from urlparse import urlparse
+
 from status_codes import (
     __SUCCESS__, __INFO__, __REDIRECTION__, __CLIENT_ERROR__, __SERVER_ERROR__
 )
+from headers import __DEFAUT__
 
-
-PATHLOG = os.getcwd() + "/araniapp/lib/log/"
-LOG = modlogger.build_logger("extract4", "info", PATHLOG + "extract4.log")
+__DIRNAME__ = os.path.dirname(__file__)
+LOG = modlogger.build_logger("extract4", "info", __DIRNAME__ + "/extract4.log")
 LOG.add_handler("FileHandler", "info")
 LOG.add_handler('StreamHandler', 'debug')
 
@@ -97,20 +98,8 @@ class Connection(State):
 
     def add_headers(self, addhead={}):
         self.pos = 2
-        listhead = {
-            'accept-charset': 'utf-8,*',
-            'cache-control': 'no-cache',
-            'accept-encoding': 'gzip,deflate,sdch',
-            'accept': 'text/html',
-            # 'cookie': ''
-            'accept-language': 'es,en-US;q=0.8,en;q=0.6',
-            'user-agent': '[Mozilla/5.0 (X11; Linux x86_64)',
-            'connection': 'keep-alive',
-            # DO NOT TRACK  : 1 (Do Not Track Enabled) or 0 (Do Not Track
-            # Disabled)
-            'DNT': 1
-        }
-        if len(addhead) != 0:
+        listhead = __DEFAUT__
+        if len(__DEFAUT__) != 0:
             listhead.update(addhead)
         for head, value in listhead.iteritems():
             self.putheader(head, value)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 __INFO__ = {
     100: "Continue", 

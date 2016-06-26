@@ -1,8 +1,10 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import logging
 import os
+import logging
+import errno
+
+FLAGS = os.O_CREAT | os.O_EXCL | os.O_WRONLY
 
 LEVEL = {"notset": logging.NOTSET,
          "debug": logging.DEBUG,
@@ -12,20 +14,29 @@ LEVEL = {"notset": logging.NOTSET,
          "critical": logging.CRITICAL}
 
 FORMATS = ['%(filename)s', '%(levelname)s', '%(funcName)s', '%(lineno)s', '%(message)s']
-
 HANDLER = {"FileHandler": logging.FileHandler,
            "StreamHandler": logging.StreamHandler}
-
-PATHLIB = ''
 
 
 class build_logger(object):
     '''
-        documentar codigo
+        logging = build_logger('main', 'info', '.' + '/logger.log')
+        logging.add_handler('StreamHandler', 'debug')
+        logging.add_handler('FileHandler', 'info')
     '''
 
     def __init__(self, name, lvl, savefile=None):
+        
         self.savefile = savefile
+        
+        try:
+            file_handle = os.open(self.savefile, FLAGS)
+        except OSError as e:
+            if e.errno == errno.EEXIST:
+                pass
+            else:
+                raise
+
         self.logger = logging.getLogger(name)
         self.logger.setLevel(LEVEL.get(lvl))
         self.formatter = logging.Formatter(

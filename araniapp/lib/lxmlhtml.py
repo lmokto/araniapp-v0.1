@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
 
+from os.path import basename
+import urllib2
+
 from lxml import html, etree
 from lxml import html as LH
 from lxml import html, cssselect
-from os.path import basename
+
+from bs4 import BeautifulSoup
 from urlparse import urlsplit
-import urllib2
+
+
+def form_action(dochtml):
+    html_proc = BeautifulSoup(dochtml, 'html.parser')
+    return html_proc.find('form').get('action')
 
 
 def event(dochtml, tag='a', event='onclick'):

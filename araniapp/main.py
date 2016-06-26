@@ -7,21 +7,21 @@ import redis
 import json
 from configobj import ConfigObj
 
-config = ConfigObj(os.path.dirname(__file__) + '/config.cfg')
+#import ipdb; ipdb.set_trace()
+
+__DIRNAME__ = os.path.dirname(__file__)
+
+config = ConfigObj(__DIRNAME__ + '/config.cfg')
 redis_cfg = config['redis']
 extract_cfg = config['extract']
-loggger_cfg = config['logger']
+loggger_cfg = config['logger_main']
 
 redis = redis.StrictRedis(host=redis_cfg['host'], port=redis_cfg[
                           'port'], db=redis_cfg['db'])
 
-PATHLOG = os.getcwd() + '/araniapp/lib/log/'
-LOG = build_logger('main', 'info', PATHLOG + 'main.log')
-LOG.add_handler('StreamHandler', 'debug')
-LOG.add_handler('FileHandler', 'info')
-
-externos = set([])
-subdominios = set([])
+logging = build_logger('main', 'info', __DIRNAME__ + '/main.log')
+logging.add_handler('StreamHandler', 'debug')
+logging.add_handler('FileHandler', 'info')
 
 
 def extract(source, semilla=''):
@@ -59,7 +59,7 @@ def main(semilla):
             break
 
         time.sleep(1)
-        LOG.info(conn.estados[conn.pos])
+        logging.info(conn.estados[conn.pos])
 
         if conn.pos == 0:
             time.sleep(120)
@@ -67,7 +67,7 @@ def main(semilla):
         path = redis.srandmember(semilla)
         redis.smove(semilla, 'indexados::{0}'.format(semilla), path)
 
-        LOG.info(path)
+        logging.info(path)
         conn.req(path)
 
         if conn.source > 0:
@@ -79,6 +79,6 @@ if __name__ == '__main__':
 
     semilla = sys.argv[1]
     norm = norm(semilla)
-    LOG.info(40 * '=')
-    LOG.info('SCANING {0}'.format(semilla))
+    logging.info(40 * '=')
+    logging.info('SCANING {0}'.format(semilla))
     main(semilla)
